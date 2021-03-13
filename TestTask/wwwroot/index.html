@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Информация о объектах</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>Список договоров:</h2>
+    <table id="table1" class="table table-condensed table-striped  col-md-6">
+        <thead><tr><th>Id</th><th>Шифр</th><th>Наименование</th><th>Заказчик</th><th></th></tr></thead>
+        <tbody>
+        </tbody>
+    </table>
+    <h2>Список этапов договоров:</h2>
+    <table id="table2" class="table table-condensed table-striped  col-md-6">
+        <thead><tr><th>Id</th><th>Наименование этапа</th><th>Начало</th><th>Окончание</th>></tr></thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        // Получение всех договоров
+        async function GetContracts() {
+            // отправляет запрос и получаем ответ
+            const response = await fetch("/api/contracts/GetContractS", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+
+                const contracts = await response.json();
+                let table1 = document.querySelector('#table1');
+                //let rows = document.querySelector("tbody");
+                contracts.forEach(contract => {
+                    // добавляем полученные элементы в таблицу
+                    table1.append(row(contract));
+                });
+            }
+        }
+
+
+        // создание строки для таблицы договоров
+        function row(contract) {
+
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", contract.id);
+
+            const idTd = document.createElement("td");
+            idTd.append(contract.id);
+            tr.append(idTd);
+
+            const codeTd = document.createElement("td");
+            codeTd.append(contract.code);
+            tr.append(codeTd);
+
+            const nameTd = document.createElement("td");
+            nameTd.append(contract.name);
+            tr.append(nameTd);
+
+            const ownerTd = document.createElement("td");
+            ownerTd.append(contract.owner);
+            tr.append(ownerTd);
+
+            const linksTd = document.createElement("td");
+
+            const editLink = document.createElement("a");
+            editLink.setAttribute("data-id", contract.id);
+            editLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            editLink.append("Просмотор этапов");
+            editLink.addEventListener("click", e => {
+
+                e.preventDefault();
+                var table = document.querySelector('#table2');
+                while (table.rows.length > 1) {
+                    table.deleteRow(1);
+                }
+                GetContractstages(contract.id);
+            });
+            linksTd.append(editLink);
+
+            tr.appendChild(linksTd);
+
+            return tr;
+        }
+        // Получение всех этапов
+        async function GetContractstages(id) {
+            // отправляет запрос и получаем ответ
+            const response = await fetch("/api/contracts/GetContractStages/" + id, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+
+                const stages = await response.json();
+                let table2 = document.querySelector('#table2');
+                stages.forEach(stage => {
+                    // добавляем полученные элементы в таблицу
+                    table2.append(row2(stage));
+                });
+            }
+        }
+        // создание строки для таблицы этапов
+        function row2(stage) {
+
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", stage.id);
+
+            const idTd = document.createElement("td");
+            idTd.append(stage.id);
+            tr.append(idTd);
+
+
+            const nameTd = document.createElement("td");
+            nameTd.append(stage.name);
+            tr.append(nameTd);
+
+            const startTd = document.createElement("td");
+            startTd.append(stage.startTime);
+            tr.append(startTd);
+
+            const endTd = document.createElement("td");
+            endTd.append(stage.endTime);
+            tr.append(endTd);
+
+            return tr;
+        }
+        // загрузка договоров
+        GetContracts();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Список контрактов</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h3>Выберите Excel-файл для загрузки информации о договорах</h3>
+    <form action='api/Import/AddFileContract' method="post" enctype="multipart/form-data">
+        <p><input type="file" name="fileExcel" /><br></p>
+        <p><input type="submit" value="Загрузить" /></p>
+    </form>
+    <h3>Выберите Excel-файл для загрузки информации об этапах договоров</h3>
+    <form action='api/Import/AddFileStage' method="post" enctype="multipart/form-data">
+        <p><input type="file" name="fileExcel" /><br></p>
+        <p><input type="submit" value="Загрузить" /></p>
+    </form>
+</body>
+</html>
