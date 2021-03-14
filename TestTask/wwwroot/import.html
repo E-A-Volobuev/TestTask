@@ -17,24 +17,31 @@
         h3 {
             margin-left: 400px;
         }
+        #aa {
+            margin-left: 20px;
+        }
+     
     </style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
+
+    <div id="aa"><a href="/index.html">Просмотр тaблиц</a></div>
+
     <h3 id="h_con">Выберите Excel-файл для загрузки информации о договорах</h3>
     <div id="contr">
         <form action='api/Import/AddFileContract' method="post" enctype="multipart/form-data">
-            <p><input type="file" name="fileExcel" /><br></p>
+            <p><input type="file" name="excelFile" /><br></p>
             <p><input type="submit" value="Загрузить" /></p>
         </form>
     </div>
     <h3 id="h_stag">Выберите Excel-файл для загрузки информации об этапах договоров</h3>
     <div id="stag">
         <form action='api/Import/AddFileStage' method="post" enctype="multipart/form-data">
-            <p><input type="file" name="fileExcel" /><br></p>
+            <p><input type="file" name="excelFile" /><br></p>
             <p><input type="submit" value="Загрузить" /></p>
         </form>
     </div>
-    
+
 </body>
 </html>

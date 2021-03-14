@@ -6,15 +6,23 @@
     <title>Информация о объектах</title>
     <style>
         h2 {
+            font-size: 20px;
             margin-left: 400px;
         }
         table {
             margin-left: 400px;
         }
+        #aa {
+            font-size: 20px;
+            margin-left: 20px;
+        }
     </style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
+    <div id="aa">
+        <a href="/import.html">Добавить файлы</a>
+    </div>
     <h2>Список договоров:</h2>
     <table id="table1" class="table table-condensed table-striped  col-md-6">
         <thead><tr><th>Id</th><th>Шифр</th><th>Наименование</th><th>Заказчик</th><th></th></tr></thead>
@@ -23,7 +31,7 @@
     </table>
     <h2>Список этапов договоров:</h2>
     <table id="table2" class="table table-condensed table-striped  col-md-6">
-        <thead><tr><th>Id</th><th>Наименование этапа</th><th>Начало</th><th>Окончание</th>></tr></thead>
+        <thead><tr><th>Id</th><th>Наименование этапа</th><th>Начало</th><th>Окончание</th></tr></thead>
         <tbody>
         </tbody>
     </table>

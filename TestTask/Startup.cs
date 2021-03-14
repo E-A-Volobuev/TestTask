@@ -29,7 +29,7 @@ namespace TestTask
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string con = @"Server=(localdb)\mssqllocaldb;Database=test_task_db;Trusted_Connection=True;";
+            string con = Configuration.GetConnectionString("DefaultConnection");
             // устанавливаем контекст данных
             services.AddDbContext<ContractsContext>(options => options.UseSqlServer(con));
             services.AddControllers();

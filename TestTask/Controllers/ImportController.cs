@@ -17,89 +17,132 @@ namespace TestTask.Controllers
     public class ImportController : ControllerBase
     {
         ContractsContext db;
+
         IWebHostEnvironment _appEnvironment;
+
         public ImportController(ContractsContext context, IWebHostEnvironment appEnvironment)
         {
             _appEnvironment = appEnvironment;
             db = context;
         }
-        public void CreateFile(IFormFile fileExcel)//копирование выбранного файла в папку с программой
+
+        public void CreateFile(IFormFile excelFile)//копирование выбранного файла в папку с программой
         {
-            var fileName = System.IO.Path.GetFileName(fileExcel.FileName);
+            var fileName = System.IO.Path.GetFileName(excelFile.FileName);
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Files", fileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                fileExcel.CopyTo(fileStream);
+                excelFile.CopyTo(fileStream);
             }
         }
+
         [HttpPost]//выбор файла excel c информацией об этапах договора и загрузка в бд
-        public string AddFileStage(IFormFile fileExcel)
+        public string AddFileStage(IFormFile excelFile)
         {
-            if (fileExcel != null && fileExcel.Length > 0)
+            try
             {
-                CreateFile(fileExcel);
-            }
-            if (fileExcel != null)
-            {
-                // путь к папке Files
-                string path = "/Files/" + fileExcel.FileName;
-                string map = "";
-                // сохраняем файл в папку Files в каталоге wwwroot
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+
+                if (excelFile != null && excelFile.Length > 0)
                 {
-                    map = _appEnvironment.WebRootPath + path;
-                    fileExcel.CopyTo(fileStream);
-                }
-                // начало использования библиотеке ClosedXML
-                var workbook = new XLWorkbook(map);
-                var worksheet = workbook.Worksheet(1);
-                // получим все строки в файле
-                var rows = worksheet.RangeUsed().RowsUsed();
-                // пример чтения строк файла.
-                foreach (var row in rows)
-                {
-                    Stage stage = new Stage { Name = row.Cell(1).Value.ToString(), StartTime = row.Cell(2).Value.ToString(), EndTime = row.Cell(3).Value.ToString(), ContractId = Convert.ToInt32(row.Cell(4).Value.ToString()) };
-                    db.Stages.Add(stage);
+                    CreateFile(excelFile);
+
+                    // путь к папке Files
+                    string path = "/Files/" + excelFile.FileName;
+                    string map = "";
+
+                    // сохраняем файл в папку Files в каталоге wwwroot
+                    using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                    {
+                        map = _appEnvironment.WebRootPath + path;
+                        excelFile.CopyTo(fileStream);
+                    }
+                    // начало использования библиотеке ClosedXML
+                    var workbook = new XLWorkbook(map);
+                    var worksheet = workbook.Worksheet(1);
+                    // получим все строки в файле
+                    var rows = worksheet.RangeUsed().RowsUsed();
+
+                    // чтение строк файла
+                    foreach (var row in rows)
+                    {
+                        Stage stage = new Stage { Name = row.Cell(1).Value.ToString(), StartTime = row.Cell(2).Value.ToString(), EndTime = row.Cell(3).Value.ToString(), ContractId = Convert.ToInt32(row.Cell(4).Value.ToString()) };
+                        db.Stages.Add(stage);
+                    }
+
+                    db.SaveChanges();
+
+                    return "Данные этапов договоров загружены в БД";
                 }
 
-                db.SaveChanges();
+                else
+                {
+                    return "Файл не выбран";
+                }
+
             }
-            return "Данные этапов договоров загружены в БД";
+
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+          
+            
 
         }
+
         [HttpPost]//выбор файла excel c информацией о договорах и загрузка в бд
-        public string AddFileContract(IFormFile fileExcel)
+        public string AddFileContract(IFormFile excelFile)
         {
-            if (fileExcel != null && fileExcel.Length > 0)
+            try
             {
-                CreateFile(fileExcel);
-            }
-            if (fileExcel != null)
-            {
-                // путь к папке Files
-                string path = "/Files/" + fileExcel.FileName;
-                string map = "";
-                // сохраняем файл в папку Files в каталоге wwwroot
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+
+                if (excelFile != null && excelFile.Length > 0)
                 {
-                    map = _appEnvironment.WebRootPath + path;
-                    fileExcel.CopyTo(fileStream);
-                }
-                // начало использования библиотеке ClosedXML
-                var workbook = new XLWorkbook(map);
-                var worksheet = workbook.Worksheet(1);
-                // получим все строки в файле
-                var rows = worksheet.RangeUsed().RowsUsed();
-                // пример чтения строк файла.
-                foreach (var row in rows)
-                {
-                    Contract contract = new Contract { Code = row.Cell(1).Value.ToString(), Name = row.Cell(2).Value.ToString(), Owner = row.Cell(3).Value.ToString() };
-                    db.Contracts.Add(contract);
+                    CreateFile(excelFile);
+
+
+                    // путь к папке Files
+                    string path = "/Files/" + excelFile.FileName;
+                    string map = "";
+
+                    // сохраняем файл в папку Files в каталоге wwwroot
+                    using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                    {
+                        map = _appEnvironment.WebRootPath + path;
+                        excelFile.CopyTo(fileStream);
+                    }
+
+                    // начало использования библиотеке ClosedXML
+                    var workbook = new XLWorkbook(map);
+                    var worksheet = workbook.Worksheet(1);
+                    // получим все строки в файле
+                    var rows = worksheet.RangeUsed().RowsUsed();
+
+                    //  чтение строк файла.
+                    foreach (var row in rows)
+                    {
+                        Contract contract = new Contract { Code = row.Cell(1).Value.ToString(), Name = row.Cell(2).Value.ToString(), Owner = row.Cell(3).Value.ToString() };
+                        db.Contracts.Add(contract);
+                    }
+
+                    db.SaveChanges();
+
+                    return "Данные о договорах загружены в БД";
                 }
 
-                db.SaveChanges();
+                else
+                {
+                    return "Файл не выбран";
+                }
+
             }
-            return "Данные о договорах загружены в БД";
+
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+
 
         }
 
